@@ -11,7 +11,40 @@
 
     <!-- Aquí se mostrarán las tareas -->
     <div id="task-list">
-        <p>No hay tareas todavía.</p>
+    <?php
+// Verifica si el archivo JSON ya existe
+if (file_exists($file)) {
+    // Lee el archivo JSON y decodifica su contenido a un array
+    $jsonData = file_get_contents($file);
+    $tasks = json_decode($jsonData, true);
+
+    // Si hay tareas, las mostramos
+    if (!empty($tasks)) {
+        echo '<ul>'; 
+        foreach ($tasks as $index => $task) {
+            $taskName = htmlspecialchars($task['task']);
+            $completed = $task['completed'] ? ' (Completada)' : '';
+
+            // Añadimos botones para marcar como completada y eliminar
+            echo "<li>$taskName$completed 
+                    <form action='complete_task.php' method='POST' style='display:inline;'>
+                        <input type='hidden' name='index' value='$index'>
+                        <button type='submit'>Marcar como Completada</button>
+                    </form>
+                    <form action='delete_task.php' method='POST' style='display:inline;'>
+                        <input type='hidden' name='index' value='$index'>
+                        <button type='submit'>Eliminar</button>
+                    </form>
+                    </li>";
+                }
+                echo '</ul>';
+            } else {
+                echo '<p>No hay tareas todavía.</p>';
+            }
+        } else {
+            echo '<p>No hay tareas todavía.</p>';
+        }
+        ?>
     </div>
 
     <!-- Formulario para agregar tareas -->
